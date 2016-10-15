@@ -1,7 +1,7 @@
 # IOT_TLS
 
-參考Android Document 實作 TLS連線
-https://developer.android.com/training/articles/security-ssl.html
+參考Android Document 實作 TLS連線</br>
+https://developer.android.com/training/articles/security-ssl.html</br>
 目前使用 self-signed certificate 認證
 最後會使用雙向認證
 
