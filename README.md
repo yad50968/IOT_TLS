@@ -21,3 +21,7 @@ http://stackoverflow.com/questions/31917988/okhttp-javax-net-ssl-sslpeerunverifi
 MAC server 設置 TLS連線  &  self-signed certificate</br>
 https://getgrav.org/blog/macos-sierra-apache-ssl
 
+
+</br>
+設置apache 只接受某些tls版本連線
+http://tecadmin.net/enable-tls-in-modssl-and-apache/
