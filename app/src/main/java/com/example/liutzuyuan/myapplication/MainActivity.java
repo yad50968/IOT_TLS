@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 tmf.init(keyStore);
 
                 // Create an SSLContext that uses our TrustManager
-                SSLContext context = SSLContext.getInstance("TLS");
+                SSLContext context = SSLContext.getInstance("TLSv1.2");
                 context.init(null, tmf.getTrustManagers(), null);
 
                 HostnameVerifier hostnameVerifier = new HostnameVerifier() {
@@ -64,12 +64,12 @@ public class MainActivity extends AppCompatActivity {
                     public boolean verify(String hostname, SSLSession session) {
                         HostnameVerifier hv =
                                 HttpsURLConnection.getDefaultHostnameVerifier();
-                        //return hv.verify("IP", session);
+                        //return hv.verify("IP/Domain Name", session);
                         return true;
                     }
                 };
 
-                URL url = new URL("IP");
+                URL url = new URL("https://IP");
                 HttpsURLConnection urlConnection =
                         (HttpsURLConnection)url.openConnection();
                 urlConnection.setHostnameVerifier(hostnameVerifier);
