@@ -3,9 +3,12 @@ package com.example.liutzuyuan.myapplication;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -15,6 +18,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // Create an SSLContext that uses our TrustManager
                 SSLContext context = SSLContext.getInstance("TLSv1.2");
-                context.init(null, tmf.getTrustManagers(), null);
+                context.init(null, tmf.getTrustManagers(), new java.security.SecureRandom());
 
                 HostnameVerifier hostnameVerifier = new HostnameVerifier() {
                     @Override
@@ -69,14 +74,25 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
 
-                URL url = new URL("https://IP");
+
+                URL url = new URL("https://140.119.164.35");
                 HttpsURLConnection urlConnection =
                         (HttpsURLConnection)url.openConnection();
                 urlConnection.setHostnameVerifier(hostnameVerifier);
                 urlConnection.setSSLSocketFactory(context.getSocketFactory());
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
 
-                InputStream in = urlConnection.getInputStream();
-                System.out.println("FINISH  "+in);
+
+                System.out.println("ResponseCode" + urlConnection.getResponseCode());
+
+                Map<String, List<String>> map = urlConnection.getHeaderFields();
+                System.out.println("Header : ");
+                for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                    System.out.println("Key : " + entry.getKey() + " ,Value : " + entry.getValue());
+                }
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (KeyManagementException e){
@@ -87,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
             } catch (KeyStoreException e){
                 e.printStackTrace();
             } catch (CertificateException e){
+                e.printStackTrace();
+            } catch (Exception e){
                 e.printStackTrace();
             }
         }
