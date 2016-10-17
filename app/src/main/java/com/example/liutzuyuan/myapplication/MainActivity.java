@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -31,92 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                CertificateFactory cf = CertificateFactory.getInstance("X.509");
-                // From https://www.washington.edu/itconnect/security/ca/load-der.crt
 
-                InputStream caInput = getAssets().open("server.crt");
-                Certificate ca;
-                try {
-                    ca = cf.generateCertificate(caInput);
-                    System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-                } finally {
-                    caInput.close();
-                }
-
-                // Create a KeyStore containing our trusted CAs
-
-                String keyStoreType = KeyStore.getDefaultType();
-                KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-                keyStore.load(null, null);
-                keyStore.setCertificateEntry("ca", ca);
-
-                // Create a TrustManager that trusts the CAs in our KeyStore
-
-                String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-                TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-                tmf.init(keyStore);
-
-                // Create an SSLContext that uses our TrustManager
-                SSLContext context = SSLContext.getInstance("TLSv1.2");
-                context.init(null, tmf.getTrustManagers(), new java.security.SecureRandom());
-
-                HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-                    @Override
-                    public boolean verify(String hostname, SSLSession session) {
-                        HostnameVerifier hv =
-                                HttpsURLConnection.getDefaultHostnameVerifier();
-                        //return hv.verify("IP/Domain Name", session);
-                        return true;
-                    }
-                };
-
-
-                URL url = new URL("https://140.119.164.35");
-                HttpsURLConnection urlConnection =
-                        (HttpsURLConnection)url.openConnection();
-                urlConnection.setHostnameVerifier(hostnameVerifier);
-                urlConnection.setSSLSocketFactory(context.getSocketFactory());
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-
-                System.out.println("ResponseCode" + urlConnection.getResponseCode());
-
-                Map<String, List<String>> map = urlConnection.getHeaderFields();
-                System.out.println("Header : ");
-                for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-                    System.out.println("Key : " + entry.getKey() + " ,Value : " + entry.getValue());
-                }
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (KeyManagementException e){
-                e.printStackTrace();
-
-            } catch (NoSuchAlgorithmException e){
-                e.printStackTrace();
-            } catch (KeyStoreException e){
-                e.printStackTrace();
-            } catch (CertificateException e){
-                e.printStackTrace();
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-    };
 
 
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
 
-            new Thread(runnable).start();
+            TLSConnection tlsConnection = new TLSConnection(getBaseContext());
+            new Thread(tlsConnection).start();
 
 
         }
