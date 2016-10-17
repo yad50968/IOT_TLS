@@ -108,6 +108,7 @@ public class TLSConnection extends ContextWrapper implements  Runnable{
             urlConnection.connect();
 
         } catch (Exception e){
+            System.out.println("ffff");
             e.printStackTrace();
         }
         return  urlConnection;
@@ -138,11 +139,11 @@ public class TLSConnection extends ContextWrapper implements  Runnable{
         try {
             InputStream in = urlConnection.getInputStream();
             myString = IOUtils.toString(in, "UTF-8");
-            System.out.println(in);
+
         }catch (Exception e){
             e.printStackTrace();
         }
-        return myString.toString();
+        return myString;
     }
 
     @Override
@@ -170,14 +171,8 @@ public class TLSConnection extends ContextWrapper implements  Runnable{
         };
 
         HttpsURLConnection urlConnection = constructHttpsConnection(sslContext,hostnameVerifier);
-        System.out.print("fff" + getDataFromServer(urlConnection));
-
-
-
-
-
-
-
+        String s = getDataFromServer(urlConnection);
+        System.out.println(s);
 
 
 
